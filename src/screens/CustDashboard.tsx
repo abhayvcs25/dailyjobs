@@ -94,22 +94,43 @@ const handleLogout = async () => {
           onPress: async () => {
             try {
               const result = await logoutUser();
-              // Clear all AsyncStorage items
+              // Clear ALL authentication data (customer + worker to be safe)
               await AsyncStorage.multiRemove([
                 "token",
                 "userId",
                 "userEmail",
+                "userData",
                 "customerData",
+                "workerId",
+                "workerEmail", 
+                "workerData",
                 "authToken",
               ]);
               console.log("[CustDashboard] Logout successful and storage cleared");
+              
+              // Navigate to Home with reset to prevent back navigation
               navigation.reset({
                 index: 0,
                 routes: [{ name: "Home" }],
               });
             } catch (error) {
               console.error("[CustDashboard] Logout error:", error);
-              Alert.alert("Error", "Logout failed. Please try again.");
+              // Even if API call fails, clear local storage and navigate
+              await AsyncStorage.multiRemove([
+                "token",
+                "userId",
+                "userEmail",
+                "userData",
+                "customerData",
+                "workerId",
+                "workerEmail",
+                "workerData",
+                "authToken",
+              ]);
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "Home" }],
+              });
             }
           },
           style: "destructive",

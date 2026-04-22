@@ -7,19 +7,20 @@ export default function SplashScreen({ navigation }: any) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check for both customer and worker tokens
-        const customerToken = await AsyncStorage.getItem("token");
-        const workerToken = await AsyncStorage.getItem("token"); // Both use same token key, but we can differentiate by role
+        // Check for tokens and role identifiers
+        const token = await AsyncStorage.getItem("token");
         const userId = await AsyncStorage.getItem("userId");
         const workerId = await AsyncStorage.getItem("workerId");
 
-        // If customer token exists, go to CustDashboard
-        if (customerToken && userId) {
-          navigation.replace("CustDashboard");
-        }
-        // If worker token exists, go to WorkerDashboard
-        else if (customerToken && workerId) {
+        // If worker ID exists (worker logged in), go to WorkerDashboard
+        // Worker login stores workerId in AsyncStorage
+        if (token && workerId) {
           navigation.replace("WorkerDashboard");
+        }
+        // If customer userId exists (customer logged in), go to CustDashboard
+        // Customer login stores userId in AsyncStorage
+        else if (token && userId) {
+          navigation.replace("CustDashboard");
         }
         // Otherwise go to Home for user to choose
         else {

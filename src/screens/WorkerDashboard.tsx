@@ -58,22 +58,43 @@ export default function WorkerDashboard() {
           onPress: async () => {
             try {
               const result = await workerLogout();
-              // Clear all AsyncStorage items
+              // Clear ALL authentication data (worker + customer to be safe)
               await AsyncStorage.multiRemove([
                 "token",
                 "workerId",
                 "workerEmail",
                 "workerData",
+                "userId",
+                "userEmail",
+                "userData",
+                "customerData",
                 "authToken",
               ]);
               console.log("[WorkerDashboard] Logout successful and storage cleared");
+              
+              // Navigate to Home with reset to prevent back navigation
               navigation.reset({
                 index: 0,
                 routes: [{ name: "Home" }],
               });
             } catch (error) {
               console.error("[WorkerDashboard] Logout error:", error);
-              Alert.alert("Error", "Logout failed. Please try again.");
+              // Even if API call fails, clear local storage and navigate
+              await AsyncStorage.multiRemove([
+                "token",
+                "workerId",
+                "workerEmail",
+                "workerData",
+                "userId",
+                "userEmail",
+                "userData",
+                "customerData",
+                "authToken",
+              ]);
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "Home" }],
+              });
             }
           },
           style: "destructive",
