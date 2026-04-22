@@ -1,11 +1,12 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const { getDefaultConfig } = require("@react-native/metro-config");
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('@react-native/metro-config').MetroConfig}
- */
-const config = {};
+const config = getDefaultConfig(__dirname);
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+// Ignore Android build folders that cause crashes
+config.watchFolders = [];
+config.resolver.blockList = [
+  /android\/app\/\.cxx\/.*/,
+  /android\/build\/.*/,
+];
+
+module.exports = config;
